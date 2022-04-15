@@ -63,24 +63,25 @@ function vRPvi.startRecipe(id)
   local acessProducts = list[id].products -- fornece o item necessario
   local acessProductsQty = list[id].products_qty -- fornece a quantidade respectiva  
   local permRecipe = list[id].perm
+  
   if not user_id then return end    
-  if vRP.hasPermission(user_id,permRecipe) or permRecipe == "" then
-    if not checkWeightTypeTable(user_id,acessProducts,acessProductsQty) then return end -- verifica peso no inventario
+  
+  if not (vRP.hasPermission(user_id,permRecipe) or permRecipe == "") then return end
+  if not (type(acessProducts) == "table") then return end -- verifica se é uma tabela de itens.
+  if not checkWeightTypeTable(user_id,acessProducts,acessProductsQty) then return end -- verifica peso no inventario 
       
-    if not acessReagents then -- caso reagentes não seja necessario.
-      receiveAllItems(user_id, acessProducts, acessProductsQty)
-      vRPclient._playAnim(source, false, {{"mini@repair", "fixing_a_ped"}}, true)
-      return true
-    end    
+  if not acessReagents then -- caso reagentes não seja necessario (nil)
+    receiveAllItems(user_id, acessProducts, acessProductsQty)
+    vRPclient._playAnim(source, false, {{"mini@repair", "fixing_a_ped"}}, true)
+    return true
+  end    
                 
-    if type(acessReagents) == "table" and type(acessProducts) == "table" then -- para evitar 'got string'      
-      if not getMultipleInventoryItems(user_id, acessReagents, acessReagentsQty) then return end        
-      receiveAllItems(user_id, acessProducts, acessProductsQty)
-      vRPclient._playAnim(source, false, {{"mini@repair", "fixing_a_ped"}}, true)
-      return true    
-    end  
-
-  end
+  if type(acessReagents) == "table" then -- caso reagente seja necessario    
+    if not getMultipleInventoryItems(user_id, acessReagents, acessReagentsQty) then return end        
+    receiveAllItems(user_id, acessProducts, acessProductsQty)
+    vRPclient._playAnim(source, false, {{"mini@repair", "fixing_a_ped"}}, true)
+    return true    
+  end    
 
    return false
 end
