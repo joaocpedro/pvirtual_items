@@ -8,7 +8,7 @@ cfg.pos = {
 -- Server
 cfg.recipes_items = {    
     {      
-        perm = "",
+        permission = "",
         reagents = {'item'} , -- or items {'a','b'}
         reagents_qty = {1}, -- quantity or quantity items {1,2}
         products = {'leite'},

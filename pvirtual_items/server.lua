@@ -36,13 +36,10 @@ function getMultipleInventoryItems(user_id, items, qtds) -- credits <
   return hasAllItems
 end
 
-function checkWeightTypeTable(user_id, items, qtds) -- função para verificar se o player tem espaço para o item
-  for k, v in pairs(items) do
-    if vRP.getInventoryWeight(user_id) + vRP.getItemWeight(items[k]) * qtds[k] >= vRP.getInventoryMaxWeight(user_id) then 
-      TriggerClientEvent('notify:client:SendAlert', source, {
-        type = 'avs',
-        text = "Espaço insuficiente para esta produção"
-      })
+function checkWeightTypeTable(user_id, items, qtds) -- função para verificar se o player tem espaço para o item  
+  if not items then return end
+  for k, v in pairs(items) do    
+    if vRP.getInventoryWeight(user_id) + vRP.getItemWeight(items[k]) * qtds[k] >= vRP.getInventoryMaxWeight(user_id) then     
       return false
     end
   end
@@ -55,33 +52,34 @@ function receiveAllItems(user_id, items, qtds) -- receber os items (percorrendo 
   end
 end
   
-function vRPvi.startRecipe(id)  
-  local source = source 
-  local user_id = vRP.getUserId(source)  
-  local acessReagents = list[id].reagents -- Retira o item necessario da tabela.
-  local acessReagentsQty = list[id].reagents_qty -- Retira a quantidade respectiva
-  local acessProducts = list[id].products -- fornece o item necessario
-  local acessProductsQty = list[id].products_qty -- fornece a quantidade respectiva  
-  local permRecipe = list[id].perm
-  
-  if not user_id then return end    
-  
-  if not (vRP.hasPermission(user_id,permRecipe) or permRecipe == "") then return end
-  if not (type(acessProducts) == "table") then return end -- verifica se é uma tabela de itens.
-  if not checkWeightTypeTable(user_id,acessProducts,acessProductsQty) then return end -- verifica peso no inventario 
-      
-  if not acessReagents then -- caso reagentes não seja necessario (nil)
-    receiveAllItems(user_id, acessProducts, acessProductsQty)
-    vRPclient._playAnim(source, false, {{"mini@repair", "fixing_a_ped"}}, true)
-    return true
-  end    
-                
-  if type(acessReagents) == "table" then -- caso reagente seja necessario    
-    if not getMultipleInventoryItems(user_id, acessReagents, acessReagentsQty) then return end        
-    receiveAllItems(user_id, acessProducts, acessProductsQty)
-    vRPclient._playAnim(source, false, {{"mini@repair", "fixing_a_ped"}}, true)
-    return true    
-  end    
+function vRPvi.startRecipe(id)
+  local source = source
+  local user_id = vRP.getUserId(source)
+  if user_id == nil then return end   
+ 
+  local acessReagents = list[id].reagents -- itens reagentes
+  local acessReagentsQty = list[id].reagents_qty -- quantidade 
+  if acessReagents ~= nil and type(acessReagents) ~= "table" then
+    TriggerClientEvent('notify:client:SendAlert', source, { type = 'erro',  text = "Este farm não pode ser realizado." })   
+    return false
+  end
+  local acessProducts = list[id].products -- itens 'produtos'
+  local acessProductsQty = list[id].products_qty -- quantidade 
+   
+  local acessRecipe = list[id].permission
+  if not (vRP.hasPermission(user_id, acessRecipe) and checkWeightTypeTable(user_id, acessProducts, acessProductsQty)) then
+    TriggerClientEvent('notify:client:SendAlert', source, { type = 'erro',  text = "Você não tem permissão ou sua mochila está cheia" })       
+    return
+  end
 
-   return false
+  if type(acessReagents) == "table" then -- se reagente for necessario.
+    if not getMultipleInventoryItems(user_id, acessReagents, acessReagentsQty) then
+      return
+    end
+  end
+
+  receiveAllItems(user_id, acessProducts, acessProductsQty)
+  vRPclient._playAnim(source, false, {{"mini@repair", "fixing_a_ped"}}, true)
+  return true
+
 end
