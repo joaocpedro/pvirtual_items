@@ -6,7 +6,7 @@ Script for production of items - vRP Framework (Pvirtual)
 
 ```bash
   1- mova a pasta pvirtual_items até os recursos da sua base
-  2- adicione no arquivo de inicialização do seu servidor: ensure pvirtual_items
+  2- adicione no arquivo de inicialização: ensure pvirtual_items
 ```
     
 ## Melhorias  
