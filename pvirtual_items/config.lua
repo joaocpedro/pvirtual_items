@@ -6,19 +6,26 @@ cfg.pos = {
 }
 
 -- Server
-cfg.recipes_items = {    
+cfg.recipes_items = {   
     {      
         permission = "",
-        reagents = {'item'} , -- or items {'a','b'}
-        reagents_qty = {1}, -- quantity or quantity items {1,2}
-        products = {'leite'},
-        products_qty = {1}
-    },
+        reagents = {
+            ['item1'] = 2,
+            ['item2'] = 3                           
+        },     
+        products = { 
+            ['produto1'] = 1, 
+            ['produto2'] = 2,             
+        }       
+    },     
     {              
-        reagents = nil,
-        reagents_qty = nil,
-        products = {'item'},
-        products_qty = {1}
+        reagents = {   
+            ['item1'] = 1, 
+            ['item2'] = 3
+        },   
+        products = { 
+            ['produto'] = 1                     
+        }
     }
 }
 
