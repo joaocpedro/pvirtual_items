@@ -15,7 +15,7 @@ cfg.recipes_items = {
         },     
         products = { 
             ['produto1'] = 1, 
-            ['produto2'] = 2,             
+            ['produto2'] = 2             
         }       
     },     
     {              
