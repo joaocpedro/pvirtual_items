@@ -37,7 +37,7 @@ end
 function checkWeightTypeTable(user_id, items)   
   if not items then return end   
   for k, v in pairs(items) do    
-    if vRP.getInventoryWeight(user_id) + vRP.getItemWeight(k) * v >= vRP.getInventoryMaxWeight(user_id) then         
+    if vRP.getInventoryWeight(user_id) + vRP.getItemWeight(k) * v > vRP.getInventoryMaxWeight(user_id) then         
       return false
     end
   end
